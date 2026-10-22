@@ -1,0 +1,539 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CHRONO | Premium Stopwatch</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --cyan: #22d3ee;
+  --purple: #8b5cf6;
+  --pink: #ec4899;
+  --text: #f8fafc;
+  --muted: #a5b4d4;
+}
+
+body {
+  min-height: 100vh;
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: var(--text);
+  background:
+  radial-gradient(ellipse at 15% 20%, #172d59 0%, transparent 45%),
+  radial-gradient(ellipse at 85% 75%, #40134f 0%, transparent 40%),
+  #080c20;
+  overflow-x: hidden;
+}
+
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: .22;
+  pointer-events: none;
+  z-index: -1;
+}
+
+body::before {
+  background: var(--cyan);
+  top: 12%;
+  left: -150px;
+}
+
+body::after {
+  background: var(--pink);
+  right: -150px;
+  bottom: 5%;
+}
+
+nav {
+  width: min(1100px, 92%);
+  margin: 22px auto;
+  padding: 18px 26px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #ffffff20;
+  border-radius: 18px;
+  background: #ffffff08;
+  backdrop-filter: blur(16px);
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.logo span {
+  color: var(--cyan);
+}
+
+.nav-label {
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: 2px;
+}
+
+main {
+  width: min(850px, 92%);
+  margin: 50px auto 70px;
+  text-align: center;
+}
+
+.eyebrow {
+  color: var(--cyan);
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 4px;
+  margin-bottom: 15px;
+}
+
+h1 {
+  font-size: clamp(34px, 6vw, 58px);
+  line-height: 1.1;
+  margin-bottom: 15px;
+}
+
+h1 span {
+  background: linear-gradient(90deg, var(--cyan), #a78bfa, #f0abfc);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.7;
+  margin-bottom: 38px;
+}
+
+.timer-card {
+  max-width: 590px;
+  margin: auto;
+  padding: 35px 20px;
+  border: 1px solid #ffffff20;
+  border-radius: 28px;
+  background: linear-gradient(145deg, #ffffff0c, #ffffff03);
+  box-shadow: 0 25px 80px #00000035;
+  backdrop-filter: blur(18px);
+}
+
+.timer-ring {
+  width: min(290px, 75vw);
+  aspect-ratio: 1;
+  margin: 0 auto 30px;
+  border-radius: 50%;
+  padding: 7px;
+  background: conic-gradient(
+    from 0deg,
+    var(--cyan),
+    var(--purple),
+    var(--pink),
+    var(--cyan)
+  );
+  box-shadow: 0 0 35px #6366f155;
+}
+
+.timer-inner {
+  height: 100%;
+  border-radius: 50%;
+  background: #090e25;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #ffffff10;
+}
+
+#display {
+  font-size: clamp(31px, 7vw, 48px);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 1px;
+}
+
+.timer-caption {
+  margin-top: 12px;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 3px;
+}
+
+.status {
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 24px;
+}
+
+.status.active {
+  color: var(--cyan);
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 13px;
+}
+
+button {
+  border: 1px solid #ffffff20;
+  border-radius: 14px;
+  padding: 14px 24px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  background: #ffffff0b;
+  cursor: pointer;
+  transition: transform .2s, box-shadow .2s, background .2s;
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px #00000030;
+}
+
+button:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+#startBtn {
+  background: linear-gradient(100deg, #0891b2, #4f46e5);
+  border: none;
+}
+
+#pauseBtn {
+  background: #ffffff12;
+}
+
+#lapBtn {
+  border-color: #8b5cf680;
+}
+
+#resetBtn {
+  border-color: #ec489960;
+}
+
+.laps-card {
+  margin-top: 26px;
+  text-align: left;
+  padding: 24px;
+  border: 1px solid #ffffff20;
+  border-radius: 22px;
+  background: #ffffff08;
+  backdrop-filter: blur(12px);
+}
+
+.laps-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.laps-header h2 {
+  font-size: 18px;
+}
+
+#clearBtn {
+  padding: 8px 12px;
+  font-size: 12px;
+}
+
+.lap-row {
+  display: grid;
+  grid-template-columns: .5fr 1.4fr 1.4fr;
+  gap: 10px;
+  padding: 15px 5px;
+  border-bottom: 1px solid #ffffff12;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.lap-row.heading {
+  color: #c4b5fd;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.lap-row.fastest {
+  color: #67e8f9;
+}
+
+.lap-row.slowest {
+  color: #f9a8d4;
+}
+
+.empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 25px 5px;
+  font-size: 14px;
+}
+
+footer {
+  text-align: center;
+  color: #7783a5;
+  font-size: 12px;
+  padding: 0 15px 28px;
+}
+
+@media (max-width: 520px) {
+  nav {
+    padding: 15px;
+    margin-top: 12px;
+  }
+
+  main {
+    margin-top: 35px;
+  }
+
+  .timer-card {
+    padding: 28px 12px;
+  }
+
+  .laps-card {
+    padding: 17px 12px;
+  }
+
+  .lap-row {
+    font-size: 11px;
+    gap: 5px;
+  }
+
+  button {
+    padding: 12px 16px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+  <div class="logo">CHRO<span>NO.</span></div>
+  <div class="nav-label">TIME YOUR PROGRESS</div>
+</nav>
+
+<main>
+  <p class="eyebrow">Precision meets simplicity</p>
+  <h1>Every Second <span>Counts.</span></h1>
+  <p class="subtitle">
+    Focus on your goals. Track every moment.<br>
+    Your time, beautifully measured.
+  </p>
+
+  <section class="timer-card">
+    <div class="timer-ring">
+      <div class="timer-inner">
+        <div id="display">00:00:00.00</div>
+        <div class="timer-caption">HRS &nbsp; MIN &nbsp; SEC</div>
+      </div>
+    </div>
+
+    <p class="status" id="status">READY WHEN YOU ARE</p>
+
+    <div class="controls">
+      <button id="startBtn">▶ Start</button>
+      <button id="pauseBtn" disabled>Ⅱ Pause</button>
+      <button id="lapBtn" disabled>＋ Lap</button>
+      <button id="resetBtn">↻ Reset</button>
+    </div>
+  </section>
+
+  <section class="laps-card">
+    <div class="laps-header">
+      <h2>◷ &nbsp; Lap History</h2>
+      <button id="clearBtn">Clear laps</button>
+    </div>
+
+    <div class="lap-row heading">
+      <span>Lap</span>
+      <span>Lap Time</span>
+      <span>Total Time</span>
+    </div>
+
+    <div id="laps">
+      <p class="empty">Your laps will appear here.<br>Press Start, then Lap to record a time.</p>
+    </div>
+  </section>
+</main>
+
+<footer>CHRONO © 2026 · Make every moment count.</footer>
+
+<script>
+const display = document.getElementById("display");
+const statusText = document.getElementById("status");
+const startBtn = document.getElementById("startBtn");
+const pauseBtn = document.getElementById("pauseBtn");
+const lapBtn = document.getElementById("lapBtn");
+const resetBtn = document.getElementById("resetBtn");
+const clearBtn = document.getElementById("clearBtn");
+const lapsContainer = document.getElementById("laps");
+
+let startTime = 0;
+let elapsed = 0;
+let running = false;
+let frameId = null;
+let laps = [];
+let lastLapTime = 0;
+
+function formatTime(ms) {
+  const totalCentiseconds = Math.floor(ms / 10);
+  const centiseconds = totalCentiseconds % 100;
+  const totalSeconds = Math.floor(totalCentiseconds / 100);
+  const seconds = totalSeconds % 60;
+  const minutes = Math.floor(totalSeconds / 60) % 60;
+  const hours = Math.floor(totalSeconds / 3600);
+
+  return (
+    String(hours).padStart(2, "0") + ":" +
+    String(minutes).padStart(2, "0") + ":" +
+    String(seconds).padStart(2, "0") + "." +
+    String(centiseconds).padStart(2, "0")
+  );
+}
+
+function updateDisplay() {
+  const current = elapsed + (running ? performance.now() - startTime : 0);
+  display.textContent = formatTime(current);
+
+  if (running) {
+    frameId = requestAnimationFrame(updateDisplay);
+  }
+}
+
+function startStopwatch() {
+  if (running) return;
+
+  startTime = performance.now();
+  running = true;
+
+  statusText.textContent = "● STOPWATCH RUNNING";
+  statusText.classList.add("active");
+
+  startBtn.disabled = true;
+  pauseBtn.disabled = false;
+  lapBtn.disabled = false;
+
+  frameId = requestAnimationFrame(updateDisplay);
+}
+
+function pauseStopwatch() {
+  if (!running) return;
+
+  elapsed += performance.now() - startTime;
+  running = false;
+
+  cancelAnimationFrame(frameId);
+  display.textContent = formatTime(elapsed);
+
+  statusText.textContent = "PAUSED · TAKE YOUR TIME";
+  statusText.classList.remove("active");
+
+  startBtn.disabled = false;
+  startBtn.textContent = "▶ Resume";
+  pauseBtn.disabled = true;
+  lapBtn.disabled = true;
+}
+
+function resetStopwatch() {
+  running = false;
+  cancelAnimationFrame(frameId);
+
+  elapsed = 0;
+  startTime = 0;
+  laps = [];
+  lastLapTime = 0;
+
+  display.textContent = "00:00:00.00";
+  statusText.textContent = "READY WHEN YOU ARE";
+  statusText.classList.remove("active");
+
+  startBtn.disabled = false;
+  startBtn.textContent = "▶ Start";
+  pauseBtn.disabled = true;
+  lapBtn.disabled = true;
+
+  renderLaps();
+}
+
+function recordLap() {
+  if (!running) return;
+
+  const total = elapsed + performance.now() - startTime;
+  const lapTime = total - lastLapTime;
+
+  laps.push({ lapTime, total });
+  lastLapTime = total;
+
+  renderLaps();
+}
+
+function renderLaps() {
+  if (laps.length === 0) {
+    lapsContainer.innerHTML =
+      '<p class="empty">Your laps will appear here.<br>Press Start, then Lap to record a time.</p>';
+    return;
+  }
+
+  const fastest = Math.min(...laps.map(lap => lap.lapTime));
+  const slowest = Math.max(...laps.map(lap => lap.lapTime));
+
+  lapsContainer.innerHTML = "";
+
+  [...laps].reverse().forEach((lap, reverseIndex) => {
+    const index = laps.length - reverseIndex;
+    const row = document.createElement("div");
+    row.className = "lap-row";
+
+    if (laps.length > 1 && lap.lapTime === fastest) {
+      row.classList.add("fastest");
+    } else if (laps.length > 1 && lap.lapTime === slowest) {
+      row.classList.add("slowest");
+    }
+
+    const lapNumber = document.createElement("span");
+    lapNumber.textContent = "Lap " + index;
+
+    const lapDuration = document.createElement("span");
+    lapDuration.textContent = formatTime(lap.lapTime);
+
+    const totalDuration = document.createElement("span");
+    totalDuration.textContent = formatTime(lap.total);
+
+    row.append(lapNumber, lapDuration, totalDuration);
+    lapsContainer.appendChild(row);
+  });
+}
+
+startBtn.addEventListener("click", startStopwatch);
+pauseBtn.addEventListener("click", pauseStopwatch);
+lapBtn.addEventListener("click", recordLap);
+resetBtn.addEventListener("click", resetStopwatch);
+
+clearBtn.addEventListener("click", () => {
+  laps = [];
+  lastLapTime = 0;
+  renderLaps();
+});
+</script>
+
+</body>
+</html>
